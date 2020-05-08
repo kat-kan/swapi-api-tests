@@ -15,7 +15,7 @@ public class BaseTest {
     protected static RequestSpecification requestSpecification;
 
     @BeforeAll
-    public static void beforeAll(){
+    public static void beforeAll() {
 
         requestSpecification = new RequestSpecBuilder()
                 .addFilter(new AllureRestAssured())

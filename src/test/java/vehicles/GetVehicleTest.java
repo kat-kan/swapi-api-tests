@@ -2,14 +2,18 @@ package vehicles;
 
 import base.BaseTest;
 import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
+import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -36,8 +40,8 @@ public class GetVehicleTest extends BaseTest {
     private JsonPath json;
 
     @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getAllVehicles(){
+    @Severity(BLOCKER)
+    public void getAllVehicles() {
 
         Response response = given()
                 .when()
@@ -52,8 +56,8 @@ public class GetVehicleTest extends BaseTest {
     }
 
     @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getOneVehicleByPathParam(){
+    @Severity(BLOCKER)
+    public void getOneVehicleByPathParam() {
 
         Response response = given()
                 .pathParam("id", 30)
@@ -65,15 +69,16 @@ public class GetVehicleTest extends BaseTest {
                 .response();
 
         json = response.jsonPath();
-        compare("");
+        compareVehicleObject("");
     }
 
-    @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getOneVehicleByQueryParam(){
+    @ParameterizedTest(name = "name/model : {0}")
+    @MethodSource("createQueryParamData")
+    @Severity(BLOCKER)
+    public void getOneVehicleByQueryParam(String search) {
 
         Response response = given()
-                .queryParam("search", NAME)
+                .queryParam("search", search)
                 .when()
                 .get(BASE_URL + VEHICLES)
                 .then()
@@ -82,50 +87,12 @@ public class GetVehicleTest extends BaseTest {
                 .response();
 
         json = response.jsonPath();
-        compare("results[0].");
+        compareVehicleObject("results[0].");
     }
 
     @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneVehicleByPartOfQueryParam(){
-
-        String partOfName = "Imperial";
-
-        Response response = given()
-                .queryParam("search", partOfName)
-                .when()
-                .get(BASE_URL + VEHICLES)
-                .then()
-                .statusCode(SC_OK)
-                .extract()
-                .response();
-
-        json = response.jsonPath();
-        compare("results[0].");
-    }
-
-    @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneVehicleByQueryParamCaseInsensitive(){
-
-        String nameCaseInsensitive = "imperial";
-
-        Response response = given()
-                .queryParam("search", nameCaseInsensitive)
-                .when()
-                .get(BASE_URL + VEHICLES)
-                .then()
-                .statusCode(SC_OK)
-                .extract()
-                .response();
-
-        json = response.jsonPath();
-        compare("results[0].");
-    }
-
-    @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneVehicleByInvalidQueryParam(){
+    @Severity(NORMAL)
+    public void getOneVehicleByInvalidQueryParam() {
 
         String invalidName = "I don't exist";
 
@@ -143,23 +110,23 @@ public class GetVehicleTest extends BaseTest {
     }
 
     @Test
-    @Severity(SeverityLevel.MINOR)
-    public void getOnePlanetWithNonExistingId(){
+    @Severity(MINOR)
+    public void getOnePlanetWithNonExistingId() {
 
         int nonExistingId = VEHICLES_COUNT + 1;
 
         given()
                 .pathParam("id", nonExistingId)
                 .when()
-                .get(BASE_URL + VEHICLES+ "/{id}")
+                .get(BASE_URL + VEHICLES + "/{id}")
                 .then()
                 .statusCode(SC_NOT_FOUND);
     }
 
     @Disabled("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
     @Test
-    @Severity(SeverityLevel.MINOR)
-    public void getOneVehicleWithInvalidId(){
+    @Severity(MINOR)
+    public void getOneVehicleWithInvalidId() {
 
         BigInteger bigInvalidId = new BigInteger("214748364700000000000");
 
@@ -171,20 +138,37 @@ public class GetVehicleTest extends BaseTest {
                 .statusCode(SC_NOT_FOUND);
     }
 
-    private void compare(String path){
+    private void compareVehicleObject(String objectPath) {
 
-        assertThat(json.getString(path + "name")).isEqualTo(NAME);
-        assertThat(json.getString(path + "model")).isEqualTo(MODEL);
-        assertThat(json.getString(path + "manufacturer")).isEqualTo(MANUFACTURER);
-        assertThat(json.getString(path + "cost_in_credits")).isEqualTo(COST_IN_CREDITS);
-        assertThat(json.getString(path + "length")).isEqualTo(LENGTH);
-        assertThat(json.getString(path + "max_atmosphering_speed")).isEqualTo(MAX_ATMOSPHERING_SPEED);
-        assertThat(json.getString(path + "crew")).isEqualTo(CREW);
-        assertThat(json.getString(path + "passengers")).isEqualTo(PASSENGERS);
-        assertThat(json.getString(path + "cargo_capacity")).isEqualTo(CARGO_CAPACITY);
-        assertThat(json.getString(path + "consumables")).isEqualTo(CONSUMABLES);
-        assertThat(json.getString(path + "vehicle_class")).isEqualTo(VEHICLE_CLASS);
-        assertThat(json.getList(path + "pilots").size()).isEqualTo(PILOTS_COUNT);
-        assertThat(json.getList(path + "films").size()).isEqualTo(FILMS_COUNT);
+        assertThat(json.getString(objectPath + "name")).isEqualTo(NAME);
+        assertThat(json.getString(objectPath + "model")).isEqualTo(MODEL);
+        assertThat(json.getString(objectPath + "manufacturer")).isEqualTo(MANUFACTURER);
+        assertThat(json.getString(objectPath + "cost_in_credits")).isEqualTo(COST_IN_CREDITS);
+        assertThat(json.getString(objectPath + "length")).isEqualTo(LENGTH);
+        assertThat(json.getString(objectPath + "max_atmosphering_speed")).isEqualTo(MAX_ATMOSPHERING_SPEED);
+        assertThat(json.getString(objectPath + "crew")).isEqualTo(CREW);
+        assertThat(json.getString(objectPath + "passengers")).isEqualTo(PASSENGERS);
+        assertThat(json.getString(objectPath + "cargo_capacity")).isEqualTo(CARGO_CAPACITY);
+        assertThat(json.getString(objectPath + "consumables")).isEqualTo(CONSUMABLES);
+        assertThat(json.getString(objectPath + "vehicle_class")).isEqualTo(VEHICLE_CLASS);
+        assertThat(json.getList(objectPath + "pilots").size()).isEqualTo(PILOTS_COUNT);
+        assertThat(json.getList(objectPath + "films").size()).isEqualTo(FILMS_COUNT);
+    }
+
+    private static Stream<Arguments> createQueryParamData() {
+
+        String nameCaseInsensitive = "imperial";
+        String partOfName = "Imperial";
+        String modelCaseInsensitive = "BIKE";
+        String partOfModel = "ike";
+
+        return Stream.of(
+                Arguments.of(NAME),
+                Arguments.of(nameCaseInsensitive),
+                Arguments.of(partOfName),
+                Arguments.of(MODEL),
+                Arguments.of(modelCaseInsensitive),
+                Arguments.of(partOfModel)
+        );
     }
 }

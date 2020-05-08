@@ -2,14 +2,18 @@ package films;
 
 import base.BaseTest;
 import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
+import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +37,8 @@ public class GetFilmTest extends BaseTest {
     private JsonPath json;
 
     @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getAllFilms(){
+    @Severity(BLOCKER)
+    public void getAllFilms() {
 
         Response response = given()
                 .when()
@@ -49,8 +53,8 @@ public class GetFilmTest extends BaseTest {
     }
 
     @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getOneFilmByPathParam(){
+    @Severity(BLOCKER)
+    public void getOneFilmByPathParam() {
 
         Response response = given()
                 .pathParam("id", 1)
@@ -62,15 +66,16 @@ public class GetFilmTest extends BaseTest {
                 .response();
 
         json = response.jsonPath();
-        compare("");
+        compareFilmObject("");
     }
 
-    @Test
-    @Severity(SeverityLevel.BLOCKER)
-    public void getOneFilmByQueryParam(){
+    @ParameterizedTest(name = "title : {0}")
+    @MethodSource("createQueryParamData")
+    @Severity(BLOCKER)
+    public void getOneFilmByQueryParam(String title) {
 
         Response response = given()
-                .queryParam("search", TITLE)
+                .queryParam("search", title)
                 .when()
                 .get(BASE_URL + FILMS)
                 .then()
@@ -79,50 +84,13 @@ public class GetFilmTest extends BaseTest {
                 .response();
 
         json = response.jsonPath();
-        compare("results[0].");
+        compareFilmObject("results[0].");
     }
 
-    @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneFilmByPartOfQueryParam(){
-
-        String partOfTitle = "A New";
-
-        Response response = given()
-                .queryParam("search", partOfTitle)
-                .when()
-                .get(BASE_URL + FILMS)
-                .then()
-                .statusCode(SC_OK)
-                .extract()
-                .response();
-
-        json = response.jsonPath();
-        compare("results[0].");
-    }
 
     @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneFilmByQueryParamCaseInsensitive(){
-
-        String titleCaseInsensitive = "a new";
-
-        Response response = given()
-                .queryParam("search", titleCaseInsensitive)
-                .when()
-                .get(BASE_URL + FILMS)
-                .then()
-                .statusCode(SC_OK)
-                .extract()
-                .response();
-
-        json = response.jsonPath();
-        compare("results[0].");
-    }
-
-    @Test
-    @Severity(SeverityLevel.NORMAL)
-    public void getOneFilmByInvalidQueryParam(){
+    @Severity(NORMAL)
+    public void getOneFilmByInvalidQueryParam() {
 
         String invalidTitle = "I don't exist";
 
@@ -134,52 +102,64 @@ public class GetFilmTest extends BaseTest {
                 .statusCode(SC_OK)
                 .extract()
                 .response();
-        
+
         json = response.jsonPath();
         assertThat(json.getList("results").size()).isEqualTo(0);
     }
 
     @Test
-    @Severity(SeverityLevel.MINOR)
-    public void getOneFilmWithNonExistingId(){
+    @Severity(MINOR)
+    public void getOneFilmWithNonExistingId() {
 
         int nonExistingId = FILMS_COUNT + 1;
 
         given()
                 .pathParam("id", nonExistingId)
                 .when()
-                .get(BASE_URL+FILMS+"/{id}")
+                .get(BASE_URL + FILMS + "/{id}")
                 .then()
                 .statusCode(SC_NOT_FOUND);
     }
 
     @Disabled("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
     @Test
-    @Severity(SeverityLevel.MINOR)
-    public void getOneFilmWithInvalidId(){
+    @Severity(MINOR)
+    public void getOneFilmWithInvalidId() {
 
         BigInteger bigInvalidId = new BigInteger("214748364700000000000");
 
         given()
                 .pathParam("id", bigInvalidId)
                 .when()
-                .get(BASE_URL+FILMS+"/{id}")
+                .get(BASE_URL + FILMS + "/{id}")
                 .then()
                 .statusCode(SC_NOT_FOUND);
     }
 
-    private void compare(String path){
+    private void compareFilmObject(String objectPath) {
 
-        assertThat(json.getString(path + "title")).isEqualTo(TITLE);
-        assertThat(json.getInt(path + "episode_id")).isEqualTo(EPISODE_ID);
-        assertThat(json.getString(path + "opening_crawl")).isEqualTo(OPENING_CRAWL);
-        assertThat(json.getString(path + "director")).isEqualTo(DIRECTOR);
-        assertThat(json.getString(path + "producer")).isEqualTo(PRODUCER);
-        assertThat(json.getString(path + "release_date")).isEqualTo(RELEASE_DATE);
-        assertThat(json.getList(path + "characters").size()).isEqualTo(CHARACTERS_COUNT);
-        assertThat(json.getList(path + "planets").size()).isEqualTo(PLANETS_COUNT);
-        assertThat(json.getList(path + "starships").size()).isEqualTo(STARSHIPS_COUNT);
-        assertThat(json.getList(path + "vehicles").size()).isEqualTo(VEHICLES_COUNT);
-        assertThat(json.getList(path + "species").size()).isEqualTo(SPECIES_COUNT);
+        assertThat(json.getString(objectPath + "title")).isEqualTo(TITLE);
+        assertThat(json.getInt(objectPath + "episode_id")).isEqualTo(EPISODE_ID);
+        assertThat(json.getString(objectPath + "opening_crawl")).isEqualTo(OPENING_CRAWL);
+        assertThat(json.getString(objectPath + "director")).isEqualTo(DIRECTOR);
+        assertThat(json.getString(objectPath + "producer")).isEqualTo(PRODUCER);
+        assertThat(json.getString(objectPath + "release_date")).isEqualTo(RELEASE_DATE);
+        assertThat(json.getList(objectPath + "characters").size()).isEqualTo(CHARACTERS_COUNT);
+        assertThat(json.getList(objectPath + "planets").size()).isEqualTo(PLANETS_COUNT);
+        assertThat(json.getList(objectPath + "starships").size()).isEqualTo(STARSHIPS_COUNT);
+        assertThat(json.getList(objectPath + "vehicles").size()).isEqualTo(VEHICLES_COUNT);
+        assertThat(json.getList(objectPath + "species").size()).isEqualTo(SPECIES_COUNT);
+    }
+
+    private static Stream<Arguments> createQueryParamData() {
+
+        String titleCaseInsensitive = "a new";
+        String partOfTitle = "A New";
+
+        return Stream.of(
+                Arguments.of(titleCaseInsensitive),
+                Arguments.of(partOfTitle),
+                Arguments.of(TITLE)
+        );
     }
 }
