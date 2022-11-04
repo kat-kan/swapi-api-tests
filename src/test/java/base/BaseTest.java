@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 public class BaseTest {
 
-    protected static final String BASE_URL = "https://swapi.py4e.com/api/";
+    protected static final String BASE_URL = "https://swapi.dev/api/";
     protected static final String FILMS = "films";
     protected static final String PLANETS = "planets";
     protected static final String VEHICLES = "vehicles";

@@ -1,6 +1,6 @@
-# stb_swapi
+# swapi_api_tests
 
-Tests for Star Wars API ([SWAPI documentation](https://swapi.py4e.com/documentation#intro)):
+Tests for Star Wars API ([SWAPI documentation](https://swapi.dev/documentation)):
 - planets
 - vehicles
 - films. 

@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetFilmTest extends BaseTest {
 
-    private final static int FILMS_COUNT = 7;
+    private final static int FILMS_COUNT = 6;
     private final static int EPISODE_ID = 4;
     private final static int CHARACTERS_COUNT = 18;
     private final static int PLANETS_COUNT = 3;

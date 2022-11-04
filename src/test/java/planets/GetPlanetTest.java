@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetPlanetTest extends BaseTest {
 
-    private final static int PLANETS_COUNT = 61;
+    private final static int PLANETS_COUNT = 60;
     private final static int RESIDENTS_COUNT = 11;
     private final static int FILMS_COUNT = 4;
 
