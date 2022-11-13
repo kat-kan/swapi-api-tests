@@ -111,7 +111,7 @@ public class GetVehicleTest extends BaseTest {
 
     @Test
     @Severity(MINOR)
-    public void getOnePlanetWithNonExistingId() {
+    public void getOneVehicleWithNonExistingId() {
 
         int nonExistingId = VEHICLES_COUNT + 1;
 
