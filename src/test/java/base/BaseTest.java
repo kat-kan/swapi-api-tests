@@ -11,6 +11,7 @@ public class BaseTest {
     protected static final String FILMS = "films";
     protected static final String PLANETS = "planets";
     protected static final String VEHICLES = "vehicles";
+    protected static final String STARSHIPS = "starships";
 
     protected static RequestSpecification requestSpecification;
 
