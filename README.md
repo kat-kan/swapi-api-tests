@@ -1,9 +1,10 @@
-# swapi_api_tests
+# swapi-api-tests
 
 Tests for Star Wars API ([SWAPI documentation](https://swapi.dev/documentation)):
 - planets
 - vehicles
-- films. 
+- films
+- tarships
 
 ## Guidelines for running tests with Maven
 
