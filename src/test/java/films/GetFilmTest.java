@@ -15,7 +15,8 @@ import java.util.stream.Stream;
 
 import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetFilmTest extends BaseTest {

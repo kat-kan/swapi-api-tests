@@ -1,9 +1,10 @@
 package base;
 
 import io.qameta.allure.restassured.AllureRestAssured;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeAll;
+import org.testng.annotations.BeforeSuite;
 
 public class BaseTest {
 
@@ -15,9 +16,10 @@ public class BaseTest {
 
     protected static RequestSpecification requestSpecification;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeSuite
+    public static void setup() {
 
+        RestAssured.useRelaxedHTTPSValidation();
         requestSpecification = new RequestSpecBuilder()
                 .addFilter(new AllureRestAssured())
                 .build();
