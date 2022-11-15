@@ -17,7 +17,7 @@ public class BaseTest {
     protected static RequestSpecification requestSpecification;
 
     @BeforeSuite
-    public static void setup() {
+    public void setup() {
 
         RestAssured.useRelaxedHTTPSValidation();
         requestSpecification = new RequestSpecBuilder()
