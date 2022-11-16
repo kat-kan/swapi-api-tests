@@ -4,14 +4,12 @@ import base.BaseTest;
 import io.qameta.allure.Severity;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Ignore;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.math.BigInteger;
-import java.util.stream.Stream;
 
 import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
@@ -41,7 +39,7 @@ public class GetStarshipTest extends BaseTest {
 
     private JsonPath json;
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getAllStarships() {
 
@@ -57,7 +55,7 @@ public class GetStarshipTest extends BaseTest {
         assertThat(json.getInt("count")).isEqualTo(STARSHIPS_COUNT);
     }
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneStarshipByPathParam() {
 
@@ -75,8 +73,7 @@ public class GetStarshipTest extends BaseTest {
         compareStarshipObject("");
     }
 
-    @ParameterizedTest(name = "name/model : {0}")
-    @MethodSource("createQueryParamData")
+    @Test(dataProvider = "queryParamData", groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneStarshipByQueryParam(String search) {
 
@@ -93,7 +90,7 @@ public class GetStarshipTest extends BaseTest {
         compareStarshipObject("results[0].");
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(NORMAL)
     public void getOneVehicleByInvalidQueryParam() {
 
@@ -112,7 +109,7 @@ public class GetStarshipTest extends BaseTest {
         assertThat(json.getList("results").size()).isEqualTo(0);
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneStarshipWithNonExistingId() {
 
@@ -126,8 +123,8 @@ public class GetStarshipTest extends BaseTest {
                 .statusCode(SC_NOT_FOUND);
     }
 
-    @Disabled("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
-    @Test
+    @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneStarshipWithInvalidId() {
 
@@ -143,38 +140,32 @@ public class GetStarshipTest extends BaseTest {
 
     private void compareStarshipObject(String objectPath) {
 
-        assertThat(json.getString(objectPath + "name")).isEqualTo(NAME);
-        assertThat(json.getString(objectPath + "model")).isEqualTo(MODEL);
-        assertThat(json.getString(objectPath + "manufacturer")).isEqualTo(MANUFACTURER);
-        assertThat(json.getString(objectPath + "cost_in_credits")).isEqualTo(COST_IN_CREDITS);
-        assertThat(json.getString(objectPath + "length")).isEqualTo(LENGTH);
-        assertThat(json.getString(objectPath + "max_atmosphering_speed")).isEqualTo(MAX_ATMOSPHERING_SPEED);
-        assertThat(json.getString(objectPath + "crew")).isEqualTo(CREW);
-        assertThat(json.getString(objectPath + "passengers")).isEqualTo(PASSENGERS);
-        assertThat(json.getString(objectPath + "cargo_capacity")).isEqualTo(CARGO_CAPACITY);
-        assertThat(json.getString(objectPath + "consumables")).isEqualTo(CONSUMABLES);
-        assertThat(json.getString(objectPath + "hyperdrive_rating")).isEqualTo(HYPERDRIVE_RATING);
-        assertThat(json.getString(objectPath + "MGLT")).isEqualTo(MGLT);
-        assertThat(json.getString(objectPath + "starship_class")).isEqualTo(STARSHIP_CLASS);
-        assertThat(json.getList(objectPath + "pilots").size()).isEqualTo(PILOTS_COUNT);
-        assertThat(json.getList(objectPath + "films").size()).isEqualTo(FILMS_COUNT);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(json.getString(objectPath + "name"), NAME);
+        softAssert.assertEquals(json.getString(objectPath + "model"), MODEL);
+        softAssert.assertEquals(json.getString(objectPath + "manufacturer"), MANUFACTURER);
+        softAssert.assertEquals(json.getString(objectPath + "cost_in_credits"), COST_IN_CREDITS);
+        softAssert.assertEquals(json.getString(objectPath + "length"), LENGTH);
+        softAssert.assertEquals(json.getString(objectPath + "max_atmosphering_speed"), MAX_ATMOSPHERING_SPEED);
+        softAssert.assertEquals(json.getString(objectPath + "crew"), CREW);
+        softAssert.assertEquals(json.getString(objectPath + "passengers"), PASSENGERS);
+        softAssert.assertEquals(json.getString(objectPath + "cargo_capacity"), CARGO_CAPACITY);
+        softAssert.assertEquals(json.getString(objectPath + "consumables"), CONSUMABLES);
+        softAssert.assertEquals(json.getString(objectPath + "hyperdrive_rating"), HYPERDRIVE_RATING);
+        softAssert.assertEquals(json.getString(objectPath + "MGLT"), MGLT);
+        softAssert.assertEquals(json.getString(objectPath + "starship_class"), STARSHIP_CLASS);
+        softAssert.assertEquals(json.getList(objectPath + "pilots").size(), PILOTS_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "films").size(), FILMS_COUNT);
+        softAssert.assertAll();
     }
 
-    private static Stream<Arguments> createQueryParamData() {
-
+    @DataProvider(name = "queryParamData")
+    public Object[][] queryParamDataProvider() {
         String nameCaseInsensitive = "death";
         String partOfName = "Death";
         String modelCaseInsensitive = "BATTLE";
         String partOfModel = "ttl";
 
-        return Stream.of(
-                Arguments.of(NAME),
-                Arguments.of(nameCaseInsensitive),
-                Arguments.of(partOfName),
-                Arguments.of(MODEL),
-                Arguments.of(modelCaseInsensitive),
-                Arguments.of(partOfModel)
-        );
+        return new Object[][]{{nameCaseInsensitive}, {partOfName}, {modelCaseInsensitive}, {partOfModel}};
     }
-
 }

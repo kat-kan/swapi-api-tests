@@ -4,18 +4,17 @@ import base.BaseTest;
 import io.qameta.allure.Severity;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Ignore;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.math.BigInteger;
-import java.util.stream.Stream;
 
 import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetFilmTest extends BaseTest {
@@ -69,8 +68,7 @@ public class GetFilmTest extends BaseTest {
         compareFilmObject("");
     }
 
-    @ParameterizedTest(name = "title : {0}")
-    @MethodSource("createQueryParamData")
+    @Test(dataProvider = "queryParamData")
     @Severity(BLOCKER)
     public void getOneFilmByQueryParam(String title) {
 
@@ -121,7 +119,7 @@ public class GetFilmTest extends BaseTest {
                 .statusCode(SC_NOT_FOUND);
     }
 
-    @Disabled("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
+    @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
     @Test
     @Severity(MINOR)
     public void getOneFilmWithInvalidId() {
@@ -138,28 +136,26 @@ public class GetFilmTest extends BaseTest {
 
     private void compareFilmObject(String objectPath) {
 
-        assertThat(json.getString(objectPath + "title")).isEqualTo(TITLE);
-        assertThat(json.getInt(objectPath + "episode_id")).isEqualTo(EPISODE_ID);
-        assertThat(json.getString(objectPath + "opening_crawl")).isEqualTo(OPENING_CRAWL);
-        assertThat(json.getString(objectPath + "director")).isEqualTo(DIRECTOR);
-        assertThat(json.getString(objectPath + "producer")).isEqualTo(PRODUCER);
-        assertThat(json.getString(objectPath + "release_date")).isEqualTo(RELEASE_DATE);
-        assertThat(json.getList(objectPath + "characters").size()).isEqualTo(CHARACTERS_COUNT);
-        assertThat(json.getList(objectPath + "planets").size()).isEqualTo(PLANETS_COUNT);
-        assertThat(json.getList(objectPath + "starships").size()).isEqualTo(STARSHIPS_COUNT);
-        assertThat(json.getList(objectPath + "vehicles").size()).isEqualTo(VEHICLES_COUNT);
-        assertThat(json.getList(objectPath + "species").size()).isEqualTo(SPECIES_COUNT);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(json.getString(objectPath + "title"),TITLE);
+        softAssert.assertEquals(json.getInt(objectPath + "episode_id"),EPISODE_ID);
+        softAssert.assertEquals(json.getString(objectPath + "opening_crawl"),OPENING_CRAWL);
+        softAssert.assertEquals(json.getString(objectPath + "director"),DIRECTOR);
+        softAssert.assertEquals(json.getString(objectPath + "producer"),PRODUCER);
+        softAssert.assertEquals(json.getString(objectPath + "release_date"),RELEASE_DATE);
+        softAssert.assertEquals(json.getList(objectPath + "characters").size(),CHARACTERS_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "planets").size(),PLANETS_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "starships").size(),STARSHIPS_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "vehicles").size(),VEHICLES_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "species").size(),SPECIES_COUNT);
+        softAssert.assertAll();
     }
 
-    private static Stream<Arguments> createQueryParamData() {
-
+    @DataProvider(name = "queryParamData")
+    public Object[][] queryParamDataProvider() {
         String titleCaseInsensitive = "a new";
         String partOfTitle = "A New";
 
-        return Stream.of(
-                Arguments.of(titleCaseInsensitive),
-                Arguments.of(partOfTitle),
-                Arguments.of(TITLE)
-        );
+        return new Object[][]{{titleCaseInsensitive}, {partOfTitle}, {TITLE}};
     }
 }

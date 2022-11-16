@@ -4,14 +4,12 @@ import base.BaseTest;
 import io.qameta.allure.Severity;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Ignore;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.math.BigInteger;
-import java.util.stream.Stream;
 
 import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
@@ -70,8 +68,7 @@ public class GetPlanetTest extends BaseTest {
         comparePlanetObject("");
     }
 
-    @ParameterizedTest(name = "name : {0}")
-    @MethodSource("createQueryParamData")
+    @Test(dataProvider = "queryParamData")
     @Severity(BLOCKER)
     public void getOnePlanetByQueryParam(String name) {
 
@@ -121,7 +118,7 @@ public class GetPlanetTest extends BaseTest {
                 .statusCode(SC_NOT_FOUND);
     }
 
-    @Disabled("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
+    @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
     @Test
     @Severity(MINOR)
     public void getOnePlanetWithInvalidId() {
@@ -138,28 +135,25 @@ public class GetPlanetTest extends BaseTest {
 
     private void comparePlanetObject(String objectPath) {
 
-        assertThat(json.getString(objectPath + "name")).isEqualTo(NAME);
-        assertThat(json.getString(objectPath + "rotation_period")).isEqualTo(ROTATION_PERIOD);
-        assertThat(json.getString(objectPath + "orbital_period")).isEqualTo(ORBITAL_PERIOD);
-        assertThat(json.getString(objectPath + "diameter")).isEqualTo(DIAMETER);
-        assertThat(json.getString(objectPath + "climate")).isEqualTo(CLIMATE);
-        assertThat(json.getString(objectPath + "gravity")).isEqualTo(GRAVITY);
-        assertThat(json.getString(objectPath + "terrain")).isEqualTo(TERRAIN);
-        assertThat(json.getString(objectPath + "surface_water")).isEqualTo(SURFACE_WATER);
-        assertThat(json.getString(objectPath + "population")).isEqualTo(POPULATION);
-        assertThat(json.getList(objectPath + "residents").size()).isEqualTo(RESIDENTS_COUNT);
-        assertThat(json.getList(objectPath + "films").size()).isEqualTo(FILMS_COUNT);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(json.getString(objectPath + "name"), NAME);
+        softAssert.assertEquals(json.getString(objectPath + "rotation_period"), ROTATION_PERIOD);
+        softAssert.assertEquals(json.getString(objectPath + "orbital_period"), ORBITAL_PERIOD);
+        softAssert.assertEquals(json.getString(objectPath + "diameter"), DIAMETER);
+        softAssert.assertEquals(json.getString(objectPath + "climate"), CLIMATE);
+        softAssert.assertEquals(json.getString(objectPath + "gravity"), GRAVITY);
+        softAssert.assertEquals(json.getString(objectPath + "terrain"), TERRAIN);
+        softAssert.assertEquals(json.getString(objectPath + "surface_water"), SURFACE_WATER);
+        softAssert.assertEquals(json.getString(objectPath + "population"), POPULATION);
+        softAssert.assertEquals(json.getList(objectPath + "residents").size(), RESIDENTS_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "films").size(), FILMS_COUNT);
     }
 
-    private static Stream<Arguments> createQueryParamData() {
-
+    @DataProvider(name = "queryParamData")
+    public Object[][] queryParamDataProvider() {
         String nameCaseInsensitive = "naboo";
         String partOfName = "Na";
 
-        return Stream.of(
-                Arguments.of(NAME),
-                Arguments.of(nameCaseInsensitive),
-                Arguments.of(partOfName)
-        );
+        return new Object[][]{{nameCaseInsensitive}, {partOfName}, {NAME}};
     }
 }
