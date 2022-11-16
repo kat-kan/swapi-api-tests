@@ -14,16 +14,11 @@
         <maven.compiler.target>11</maven.compiler.target>
         <java.version>11</java.version>
         <io.rest-assured.version>5.2.0</io.rest-assured.version>
-        <org.junit.jupiter.version>5.9.0</org.junit.jupiter.version>
         <org.hamcrest.version>2.2</org.hamcrest.version>
         <org.json.version>20220924</org.json.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-        <junit-platform-surefire-provider.version>1.1.0</junit-platform-surefire-provider.version>
-        <junit-jupiter-engine.version>5.5.2</junit-jupiter-engine.version>
         <assertj-core.version>3.23.1</assertj-core.version>
         <jackson-databind.version>2.14.0</jackson-databind.version>
-        <junit-jupiter-params-version>5.9.0</junit-jupiter-params-version>
-        <allure-junit5.version>2.20.0</allure-junit5.version>
         <allure-rest-assured.version>2.20.0</allure-rest-assured.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <allure-maven.version>2.9</allure-maven.version>
@@ -37,13 +32,6 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
             <version>${allure-rest-assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-junit5 -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>${allure-junit5.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
@@ -60,20 +48,6 @@
             <version>${io.rest-assured.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${org.junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>${org.hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
@@ -86,13 +60,6 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit-jupiter-params-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
@@ -140,18 +107,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit-platform-surefire-provider.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit-jupiter-engine.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
