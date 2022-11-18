@@ -10,20 +10,20 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <io.rest-assured.version>5.2.0</io.rest-assured.version>
-        <org.hamcrest.version>2.2</org.hamcrest.version>
         <org.json.version>20220924</org.json.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <assertj-core.version>3.23.1</assertj-core.version>
-        <jackson-databind.version>2.14.0</jackson-databind.version>
         <allure-rest-assured.version>2.20.0</allure-rest-assured.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <allure-maven.version>2.9</allure-maven.version>
-        <allure-report.version>2.4.1</allure-report.version>
+        <allure-maven.version>2.10.0</allure-maven.version>
+        <allure-report.version>2.19.0</allure-report.version>
         <testng.version>7.6.1</testng.version>
+        <aspectj.version>1.9.9.1</aspectj.version>
+        <allure-testng.version>2.20.1</allure-testng.version>
+        <slf4j-simple.version>2.0.3</slf4j-simple.version>
+        <slf4j-api.version>2.0.3</slf4j-api.version>
     </properties>
 
     <dependencies>
@@ -32,13 +32,6 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
             <version>${allure-rest-assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
@@ -73,29 +66,27 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.3</version>
+            <version>${slf4j-simple.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.3</version>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure-testng.version}</version>
         </dependency>
     </dependencies>
+    
     <build>
         <plugins>
             <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>${allure-maven.version}</version>
-                <configuration>
-                    <reportVersion>${allure-report.version}</reportVersion>
-                    <outputDirectory>${basedir}/allure-reports/</outputDirectory>
-                    <resultsDirectory>${basedir}/allure-results/</resultsDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
@@ -107,9 +98,35 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
 
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure-report.version}</reportVersion>
+                    <reportDirectory>${project.basedir}/target/allure-report</reportDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
