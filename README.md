@@ -18,6 +18,8 @@ There are few ways to start using this repository:
 1. Clone with Git using command line and this command: `git clone https://github.com/kat-kan/swapi-api-tests`
 2. Clone with Git using graphical user interface (for example Sourcetree)
 3. Download ZIP with the code (using option shown in the screenshot below)
+![image](https://user-images.githubusercontent.com/17500766/202768653-3946207d-cf1b-482f-aa9b-0c03c25b9fc0.png)
+
 ## Features
 
 This project contains tests for following resources:
