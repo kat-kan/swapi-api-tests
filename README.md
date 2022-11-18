@@ -30,6 +30,11 @@ Planets :purple_circle: Vehicles :purple_circle: Films :purple_circle: Starships
 
 :white_check_mark: you can generate test execution report with Allure
 
+:white_check_mark: Allure report is triggered on every push using Github Actions
+
+![image](https://user-images.githubusercontent.com/17500766/202792930-d0db7158-ee03-4b78-9e08-74812e459990.png)
+
+
 ### Guidelines for running tests with Maven
 
 To run tests, use following command
