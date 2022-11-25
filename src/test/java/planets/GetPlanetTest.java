@@ -149,6 +149,7 @@ public class GetPlanetTest extends BaseTest {
         softAssert.assertEquals(json.getString(objectPath + "population"), POPULATION);
         softAssert.assertEquals(json.getList(objectPath + "residents").size(), RESIDENTS_COUNT);
         softAssert.assertEquals(json.getList(objectPath + "films").size(), FILMS_COUNT);
+        softAssert.assertAll();
     }
 
     @DataProvider(name = "queryParamData")
