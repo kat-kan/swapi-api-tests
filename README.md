@@ -24,11 +24,15 @@ There are few ways to start using this repository:
 
 This project contains tests for following resources:
 
-Planets :purple_circle: Vehicles :purple_circle: Films :purple_circle: Starships
+Planets :purple_circle: Vehicles :purple_circle: Films :purple_circle: Starships :purple_circle: Species
+
+:white_check_mark: parameterized tests with `@DataProvider`
 
 :white_check_mark: you can run tests in terminal with Maven
 
 :white_check_mark: you can generate test execution report with Allure
+
+:white_check_mark: all test classes use annotations `@Feature` and `@Severity` for better organization of Allure report
 
 :white_check_mark: Allure report is triggered on every push using Github Actions
 

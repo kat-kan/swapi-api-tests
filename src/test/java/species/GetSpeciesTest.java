@@ -1,17 +1,24 @@
 package species;
 
 import base.BaseTest;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
-import static io.qameta.allure.SeverityLevel.BLOCKER;
+import java.math.BigInteger;
+
+import static io.qameta.allure.SeverityLevel.*;
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Feature("Species")
 public class GetSpeciesTest extends BaseTest {
 
     private final static int SPECIES_COUNT = 37;
@@ -67,6 +74,71 @@ public class GetSpeciesTest extends BaseTest {
         compareSpeciesObject("");
     }
 
+    @Test(dataProvider = "queryParamData")
+    @Severity(BLOCKER)
+    public void getOneSpeciesByQueryParam(String name) {
+
+        Response response = given()
+                .queryParam("search", name)
+                .when()
+                .get(BASE_URL + SPECIES)
+                .then()
+                .statusCode(SC_OK)
+                .extract()
+                .response();
+
+        json = response.jsonPath();
+        compareSpeciesObject("results[0].");
+    }
+
+    @Test
+    @Severity(NORMAL)
+    public void getOneSpeciesByInvalidQueryParam() {
+
+        String invalidName = "I don't exist";
+
+        Response response = given()
+                .queryParam("search", invalidName)
+                .when()
+                .get(BASE_URL + SPECIES)
+                .then()
+                .statusCode(SC_OK)
+                .extract()
+                .response();
+
+        json = response.jsonPath();
+        assertThat(json.getList("results").size()).isEqualTo(0);
+    }
+
+    @Test
+    @Severity(MINOR)
+    public void getOnePlanetWithNonExistingId() {
+
+        int nonExistingId = SPECIES_COUNT + 1;
+
+        given()
+                .pathParam("id", nonExistingId)
+                .when()
+                .get(BASE_URL + SPECIES + "/{id}")
+                .then()
+                .statusCode(SC_NOT_FOUND);
+    }
+
+    @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
+    @Test
+    @Severity(MINOR)
+    public void getOnePlanetWithInvalidId() {
+
+        BigInteger bigInvalidId = new BigInteger("214748364700000000000");
+
+        given()
+                .pathParam("id", bigInvalidId)
+                .when()
+                .get(BASE_URL + SPECIES + "/{id}")
+                .then()
+                .statusCode(SC_NOT_FOUND);
+    }
+
     private void compareSpeciesObject(String objectPath) {
 
         SoftAssert softAssert = new SoftAssert();
@@ -79,9 +151,9 @@ public class GetSpeciesTest extends BaseTest {
         softAssert.assertEquals(json.getString(objectPath + "eye_colors"), EYE_COLORS);
         softAssert.assertEquals(json.getString(objectPath + "average_lifespan"), AVG_LIFESPAN);
         softAssert.assertEquals(json.getString(objectPath + "language"), LANGUAGE);
-        softAssert.assertEquals(getSpeciesHomeworld(json.getString(objectPath + "homeworld")), HOMEWORLD);
-        softAssert.assertEquals(json.getList("people").size(), PEOPLE_OF_SPECIES_COUNT);
+        softAssert.assertEquals(json.getList(objectPath + "people").size(), PEOPLE_OF_SPECIES_COUNT);
         softAssert.assertEquals(json.getList(objectPath + "films").size(), FILMS_COUNT);
+        softAssert.assertEquals(getSpeciesHomeworld(json.getString(objectPath + "homeworld")), HOMEWORLD);
         softAssert.assertAll();
     }
 
@@ -96,5 +168,13 @@ public class GetSpeciesTest extends BaseTest {
 
         JsonPath homeworldJsonPath = response.jsonPath();
         return homeworldJsonPath.getString("name");
+    }
+
+    @DataProvider(name = "queryParamData")
+    public Object[][] queryParamDataProvider() {
+        String nameCaseInsensitive = "quermiAN";
+        String partOfName = "ermi";
+
+        return new Object[][]{{nameCaseInsensitive}, {partOfName}, {NAME}};
     }
 }
