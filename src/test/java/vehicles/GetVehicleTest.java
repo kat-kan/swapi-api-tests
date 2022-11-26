@@ -1,6 +1,7 @@
 package vehicles;
 
 import base.BaseTest;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -17,6 +18,7 @@ import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Feature("Vehicles")
 public class GetVehicleTest extends BaseTest {
 
     private final static int VEHICLES_COUNT = 39;
