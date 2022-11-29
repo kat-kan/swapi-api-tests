@@ -14,6 +14,7 @@ public class BaseTest {
     protected static final String VEHICLES = "vehicles";
     protected static final String STARSHIPS = "starships";
     protected static final String SPECIES = "species";
+    protected static final String PEOPLE = "people";
 
     protected static RequestSpecification requestSpecification;
 
