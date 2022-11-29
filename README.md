@@ -24,7 +24,7 @@ There are few ways to start using this repository:
 
 This project contains tests for following resources:
 
-Planets :purple_circle: Vehicles :purple_circle: Films :purple_circle: Starships :purple_circle: Species
+Planets :purple_circle: Vehicles :purple_circle: Films :purple_circle: Starships :purple_circle: Species :purple_circle: People
 
 :white_check_mark: parameterized tests with `@DataProvider`
 
