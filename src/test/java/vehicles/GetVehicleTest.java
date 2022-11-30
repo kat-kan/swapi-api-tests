@@ -39,7 +39,7 @@ public class GetVehicleTest extends BaseTest {
 
     private JsonPath json;
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getAllVehicles() {
 
@@ -55,7 +55,7 @@ public class GetVehicleTest extends BaseTest {
         assertThat(json.getInt("count")).isEqualTo(VEHICLES_COUNT);
     }
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneVehicleByPathParam() {
 
@@ -72,7 +72,7 @@ public class GetVehicleTest extends BaseTest {
         compareVehicleObject("");
     }
 
-    @Test(dataProvider = "queryParamData")
+    @Test(dataProvider = "queryParamData", groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneVehicleByQueryParam(String search) {
 
@@ -89,7 +89,7 @@ public class GetVehicleTest extends BaseTest {
         compareVehicleObject("results[0].");
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(NORMAL)
     public void getOneVehicleByInvalidQueryParam() {
 
@@ -108,7 +108,7 @@ public class GetVehicleTest extends BaseTest {
         assertThat(json.getList("results").size()).isEqualTo(0);
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneVehicleWithNonExistingId() {
 
@@ -123,7 +123,7 @@ public class GetVehicleTest extends BaseTest {
     }
 
     @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneVehicleWithInvalidId() {
 

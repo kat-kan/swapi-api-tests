@@ -37,7 +37,7 @@ public class GetFilmTest extends BaseTest {
 
     private JsonPath json;
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getAllFilms() {
 
@@ -53,7 +53,7 @@ public class GetFilmTest extends BaseTest {
         assertThat(json.getInt("count")).isEqualTo(FILMS_COUNT);
     }
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneFilmByPathParam() {
 
@@ -70,7 +70,7 @@ public class GetFilmTest extends BaseTest {
         compareFilmObject("");
     }
 
-    @Test(dataProvider = "queryParamData")
+    @Test(dataProvider = "queryParamData", groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOneFilmByQueryParam(String title) {
 
@@ -88,7 +88,7 @@ public class GetFilmTest extends BaseTest {
     }
 
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(NORMAL)
     public void getOneFilmByInvalidQueryParam() {
 
@@ -107,7 +107,7 @@ public class GetFilmTest extends BaseTest {
         assertThat(json.getList("results").size()).isEqualTo(0);
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneFilmWithNonExistingId() {
 
@@ -122,7 +122,7 @@ public class GetFilmTest extends BaseTest {
     }
 
     @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOneFilmWithInvalidId() {
 

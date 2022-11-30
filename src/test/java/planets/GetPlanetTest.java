@@ -37,7 +37,7 @@ public class GetPlanetTest extends BaseTest {
 
     private JsonPath json;
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getAllPlanets() {
 
@@ -53,7 +53,7 @@ public class GetPlanetTest extends BaseTest {
         assertThat(json.getInt("count")).isEqualTo(PLANETS_COUNT);
     }
 
-    @Test
+    @Test(groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOnePlanetByPathParam() {
 
@@ -70,7 +70,7 @@ public class GetPlanetTest extends BaseTest {
         comparePlanetObject("");
     }
 
-    @Test(dataProvider = "queryParamData")
+    @Test(dataProvider = "queryParamData", groups = "positive_tests")
     @Severity(BLOCKER)
     public void getOnePlanetByQueryParam(String name) {
 
@@ -87,7 +87,7 @@ public class GetPlanetTest extends BaseTest {
         comparePlanetObject("results[0].");
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(NORMAL)
     public void getOnePlanetByInvalidQueryParam() {
 
@@ -106,7 +106,7 @@ public class GetPlanetTest extends BaseTest {
         assertThat(json.getList("results").size()).isEqualTo(0);
     }
 
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOnePlanetWithNonExistingId() {
 
@@ -121,7 +121,7 @@ public class GetPlanetTest extends BaseTest {
     }
 
     @Ignore("Temporarily disabled because of 500 response code. Test verifies if one can send really big number as path param. The expected response code would be 404")
-    @Test
+    @Test(groups = "negative_tests")
     @Severity(MINOR)
     public void getOnePlanetWithInvalidId() {
 
